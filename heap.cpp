@@ -1,4 +1,5 @@
 #include <iostream>
+#include "nodo.cpp"
 
 using namespace std;
 
@@ -7,17 +8,6 @@ using namespace std;
 
 
 #define MAX 256
-
-struct Nodo {
-    int coste_estimado;
-    int lb;
-    int order;
-    int ocupacion[7];
-
-    inline bool operator>(Nodo a, Nodo b){
-        return a.coste_estimado > b.coste_estimado;
-    }
-};
 
 /* Clase Heap - implementa un montículo binario de forma estática como un
  * vector de árboles de tamaño 256. El montículo se ordena de forma eficiente
@@ -38,6 +28,10 @@ public:
     /* Constructor */
     Heap(): numElem(0){
         
+    }
+
+    bool esVacia(){
+        return this->numElem == 0;
     }
 
     /* Pre: true

@@ -6,6 +6,8 @@
 
 using namespace std;
 
+#define paradas 7
+
 struct pedido {
     int inicio, fin, pasajeros;
 };
@@ -16,16 +18,52 @@ bool cmpBeneficio(pedido p1, pedido p2){
     return b1 > b2;
 }
 
-int lowerBound(){
-
+bool cabePedido(int ocupacion[], pedido p)
+{
+    for(int i = p.inicio; i <= p.fin ; i++){
+        if(ocupacion[i]+p.pasajeros > tren){
+            return false;
+        }
+    }
+    return true;
 }
 
-bool cabePedido(){
-
+void actOcupacion(int ocupacion[], pedido p)
+{
+    for (int i = p.inicio; i <= p.fin; i++)
+    {
+        ocupacion[i] = ocupacion[i] + p.pasajeros;
+    }
 }
+
+int lowerBound(vector<pedido> lista,int ocupacion[], int ultimo, int beneficio)
+{
+    int lb = beneficio;
+    struct paux;
+    for(int i = ultimo; i < lista.size(); i++){
+        paux = lista[i];
+        if(cabePedido(ocupacion,paux)){
+            lb = lb + (paux.fin - paux.inicio) * paux.pasajeros;
+            actOcupacion(ocupacion[], paux);
+        }
+    }
+}
+
 
 int costeEstimado(){
-
+    int lb = beneficio;
+    struct paux;
+    for (int i = ultimo; i < lista.size(); i++)
+    {
+        paux = lista[i];
+        if (cabePedido(ocupacion, paux))
+        {
+            lb = lb + (paux.fin - paux.inicio) * paux.pasajeros;
+            actOcupacion(ocupacion[], paux);
+        }else{
+            //TODO: fraccion
+        }
+    }
 }
 
 int main(int argc, char *argv[]){
@@ -56,14 +94,18 @@ int main(int argc, char *argv[]){
 
         int coste, lower_bound;
 
-        Nodo nd;
-    
+        Nodo raiz();
 
         lower_bound = lowerBound(lista,raiz.ocupacion,0);
         coste = costeEstimado(lista, raiz.ocupacion, 0);
 
+        raiz.coste_estimado = coste;
+        raiz.lb = lower_bound;
 
-        while(){
+        nodos_vivos.push(raiz);
+
+        while(nodos_vivos.esVacia())
+        {
 
         }
         
