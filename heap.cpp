@@ -29,6 +29,10 @@ public:
         
     }
 
+    bool esVacia(){
+        return this->numElem == 0;
+    }
+
     /* Pre: true
        Post: Devuelve el primer elemento */
     Nodo cima(){
