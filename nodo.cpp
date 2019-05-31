@@ -7,12 +7,12 @@ using namespace std;
 #define _NODO_
 
 class Nodo {
+public:
     int coste_estimado;
     int lb;
     int order;
     vector<int> ocupacion;
     int beneficio_actual;
-public:
 
     Nodo(){
         
