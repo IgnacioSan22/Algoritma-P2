@@ -1,6 +1,5 @@
 #include <iostream>
 #include "nodo.cpp"
-
 using namespace std;
 
 #ifndef _HEAP_
