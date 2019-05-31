@@ -186,7 +186,8 @@ int main(int argc, char *argv[]){
                     if (lower_bound > actualLB){
                         actualLB = lower_bound;
                     }
-                    if (i == (pedidos-1) && mejor_sol < lower_bound)
+                    //if (i == (pedidos-1) && mejor_sol < lower_bound)
+                    if (coste == lower_bound)
                     {
                         mejor_sol = coste;
                     }
@@ -218,7 +219,8 @@ int main(int argc, char *argv[]){
                 {
                     actualLB = lower_bound;
                 }
-                if (i == (pedidos - 1) && mejor_sol < lower_bound)
+                //if (i == (pedidos - 1) && mejor_sol < lower_bound)
+                if (coste == lower_bound)
                 {
                     mejor_sol = coste;
                 }
