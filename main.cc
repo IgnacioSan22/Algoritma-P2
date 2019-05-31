@@ -18,7 +18,7 @@ bool cmpBeneficio(pedido p1, pedido p2){
     return b1 > b2;
 }
 
-bool cabePedido(int ocupacion[], pedido p)
+bool cabePedido(int ocupacion[], pedido p, int tren)
 {
     for(int i = p.inicio; i <= p.fin ; i++){
         if(ocupacion[i]+p.pasajeros > tren){
@@ -36,32 +36,52 @@ void actOcupacion(int ocupacion[], pedido p)
     }
 }
 
-int lowerBound(vector<pedido> lista,int ocupacion[], int ultimo, int beneficio)
+int lowerBound(vector<pedido> lista,int ocupacion[], int ultimo, int beneficio, int tren)
 {
     int lb = beneficio;
     struct paux;
     for(int i = ultimo; i < lista.size(); i++){
         paux = lista[i];
-        if(cabePedido(ocupacion,paux)){
+        if(cabePedido(ocupacion,paux,tren)){
             lb = lb + (paux.fin - paux.inicio) * paux.pasajeros;
             actOcupacion(ocupacion[], paux);
         }
     }
 }
 
+void actOcupacion(int ocupacion[], int ini, int fin, int p)
+{
+    for (int i = ini; i <= fin; i++)
+    {
+        ocupacion[i] = ocupacion[i] + p;
+    }
+}
 
-int costeEstimado(){
+int faltan(int ocupacion[], int fin, int ini, int tren)
+{
+    int sum = 0, max = ocupacion[ini];
+    for (int i = ini; i <= fin; i++)
+    {
+        if(max < ocupacion[i]){ max = ocupacion[i]; }
+    }
+    return tren - max;
+}
+
+int costeEstimado(vector<pedido> lista, int ocupacion[], int ultimo, int beneficio, int tren)
+{
     int lb = beneficio;
     struct paux;
     for (int i = ultimo; i < lista.size(); i++)
     {
         paux = lista[i];
-        if (cabePedido(ocupacion, paux))
+        if (cabePedido(ocupacion, paux, tren))
         {
             lb = lb + (paux.fin - paux.inicio) * paux.pasajeros;
             actOcupacion(ocupacion[], paux);
         }else{
-            //TODO: fraccion
+            int caben = faltan(ocupacion, paux.fin,paux.inicio, tren);
+            lb = lb + (paux.fin - paux.inicio) * paux.pasajeros;
+            actOcupacion(ocupacion[], paux.inicio, paux.fin, caben);
         }
     }
 }
@@ -96,15 +116,15 @@ int main(int argc, char *argv[]){
 
         Nodo raiz();
 
-        lower_bound = lowerBound(lista,raiz.ocupacion,0);
-        coste = costeEstimado(lista, raiz.ocupacion, 0);
+        lower_bound = lowerBound(lista,raiz.ocupacion,0,tren);
+        coste = costeEstimado(lista, raiz.ocupacion, 0,tren);
 
         raiz.coste_estimado = coste;
         raiz.lb = lower_bound;
 
         nodos_vivos.push(raiz);
 
-        while(nodos_vivos.esVacia())
+        while(!nodos_vivos.esVacia())
         {
 
         }
