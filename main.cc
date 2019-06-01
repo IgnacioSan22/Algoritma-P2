@@ -85,7 +85,7 @@ void actOcupacion(vector<int>& ocupacion, int ini, int fin, int p)
 }
 
 /*
- * Pre: true
+ * Pre: 0 <= ini < fin
  * Post: Devuelve el número de plazas libres hasta el momento en el punto de
  * mayor ocupación entre las paradas ini y fin
  */
@@ -201,7 +201,7 @@ void resolver(int tren, int estaciones, int pedidos, ifstream& entrada) {
 
             nodos_vivos.push(raiz);
 
-            int ben_aux, i = 0, iter = 0;
+            int ben_aux, i = 0, iter = 0, nodos_explorados = 0;
             Nodo aux, izq, der;
             struct pedido paux;
 
@@ -210,6 +210,7 @@ void resolver(int tren, int estaciones, int pedidos, ifstream& entrada) {
             {
                 iter++;
                 aux = nodos_vivos.cima(); nodos_vivos.pop();
+                nodos_explorados++;
 
                 i = aux.order;
 
@@ -258,8 +259,9 @@ void resolver(int tren, int estaciones, int pedidos, ifstream& entrada) {
                     }
                 }
             }
-            end = clock();
 
+            end = clock();
+            cout << "Se han explorado: " << nodos_explorados << " nodos.\n";
             /* Se muestra la solcución por la salida estándar */
             double time_taken = double(end - start) / double(CLOCKS_PER_SEC);
             cout << "Time taken by program is : " << fixed
