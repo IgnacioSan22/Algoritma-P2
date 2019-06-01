@@ -101,26 +101,15 @@ bool factible(const vector<int>& oc, int tren){
     return true;
 }
 
-int main(int argc, char *argv[]){
-    
-    if(argc >= 2){
-        
-        ifstream entrada(argv[1]);
-        if(!entrada.is_open()){
-            cerr << "EL fichero de entrada no se ha podido abrir.\n";
-            return -1;
-        }
-        
-        int tren, estaciones, pedidos;
-        entrada >> tren >> estaciones >> pedidos;
-
-        cout << "Datos problema: " << tren << ", " << estaciones << ", " << pedidos << endl; 
+void resolver(int tren, int estaciones, int pedidos, ifstream& entrada) {
+     cout << "Datos problema: " << tren << ", " << estaciones << ", " << pedidos << endl; 
         //struct pedido lista[pedidos];
         vector<pedido> lista;
 
         int begin, fin, pasj, elem = 0;
         struct pedido p_auxiliar;
 
+    if(pedidos > 0){
         for(int i = 0; i < pedidos; i++){
             entrada >> begin >> fin >> pasj;
             //entrada >> lista[i].inicio >> lista[i].fin >> lista[i].pasajeros;
@@ -151,101 +140,156 @@ int main(int argc, char *argv[]){
         cout << "Primer coste estimado: " << coste << endl;
         cout << "Primer LB: " << lower_bound << endl;
 
-        actualLB = lower_bound;
+        if(lower_bound > 0){
+            actualLB = lower_bound;
+            raiz.coste_estimado = coste;
+            raiz.lb = lower_bound;
 
-        raiz.coste_estimado = coste;
-        raiz.lb = lower_bound;
+            nodos_vivos.push(raiz);
 
-        nodos_vivos.push(raiz);
+            int ben_aux, i = 0, iter = 0;
+            Nodo aux, izq, der;
+            struct pedido paux;
 
-        int ben_aux, i = 0, iter = 0;
-        Nodo aux, izq, der;
-        struct pedido paux;
-
-        while(!nodos_vivos.esVacia() /*&& iter < 6*/)
-        {
-            iter++;
-            //cout << "En el bucle\n";
-            aux = nodos_vivos.cima(); nodos_vivos.pop();
-
-            i = aux.order;
-
-            //creacion hijo izquierdo, es decir, se acepta siguiente peticion
-            //cout << "-------Hijo izq----------\n";
-            paux = lista[i];
-            ocupacion_aux = aux.ocupacion;
-            actOcupacion(ocupacion_aux,paux);
-            /*for(int i = 0; i < 7; i++)
+            while(!nodos_vivos.esVacia() /*&& iter < 6*/)
             {
-                cout << "{" << ocupacion_aux[i] << "}";
-            }
-            cout << endl;*/
-            if(factible(ocupacion_aux,tren)){
-                //cout << "Nodo factible\n";
-                ben_aux = aux.beneficio_actual + ((paux.fin - paux.inicio) * paux.pasajeros);
-                coste = costeEstimado(lista,ocupacion_aux,i+1,ben_aux,tren);
-                lower_bound = lowerBound(lista,ocupacion_aux,i+1,ben_aux,tren);
-                //cout << "Hijo izq coste estimado: " << coste << endl;
-                //cout << "Hijo izq LB: " << lower_bound << endl;
-                if (coste >= actualLB){
-                    if(i < (pedidos-1)){
-                        izq = Nodo(coste, lower_bound, i+1, ocupacion_aux, ben_aux);
-                        nodos_vivos.push(izq);
+                iter++;
+                //cout << "En el bucle\n";
+                aux = nodos_vivos.cima(); nodos_vivos.pop();
+
+                i = aux.order;
+
+                //creacion hijo izquierdo, es decir, se acepta siguiente peticion
+                //cout << "-------Hijo izq----------\n";
+                paux = lista[i];
+                ocupacion_aux = aux.ocupacion;
+                actOcupacion(ocupacion_aux,paux);
+                /*for(int i = 0; i < 7; i++)
+                {
+                    cout << "{" << ocupacion_aux[i] << "}";
+                }
+                cout << endl;*/
+                if(factible(ocupacion_aux,tren)){
+                    //cout << "Nodo factible\n";
+                    ben_aux = aux.beneficio_actual + ((paux.fin - paux.inicio) * paux.pasajeros);
+                    coste = costeEstimado(lista,ocupacion_aux,i+1,ben_aux,tren);
+                    lower_bound = lowerBound(lista,ocupacion_aux,i+1,ben_aux,tren);
+                    //cout << "Hijo izq coste estimado: " << coste << endl;
+                    //cout << "Hijo izq LB: " << lower_bound << endl;
+                    if (coste >= actualLB){
+                        if(i < (pedidos-1)){
+                            izq = Nodo(coste, lower_bound, i+1, ocupacion_aux, ben_aux);
+                            nodos_vivos.push(izq);
+                        }
+                        if (lower_bound > actualLB){
+                            actualLB = lower_bound;
+                        }
+                        if (i == (pedidos-1) && mejor_sol < lower_bound)
+                        //if (coste == lower_bound)
+                        {
+                            mejor_sol = coste;
+                        }
                     }
-                    if (lower_bound > actualLB){
+                }
+                //cout << "---------------------\n";
+
+                //creacion hijo derecho, es decir, se rechaza siguiente peticion
+                //cout << "-------Hijo der----------\n";
+                ocupacion_aux = aux.ocupacion;
+                /*for (int i = 0; i < 7; i++)
+                {
+                    cout << "{" << ocupacion_aux[i] << "}";
+                }
+                cout << endl;*/
+                ben_aux = aux.beneficio_actual;
+                coste = costeEstimado(lista, ocupacion_aux, i+1, ben_aux, tren);
+                lower_bound = lowerBound(lista, ocupacion_aux, i+1, ben_aux, tren);
+                //cout << "Hijo der coste estimado: " << coste << endl;
+                //cout << "Hijo der LB: " << lower_bound << endl;
+                if (coste >= actualLB)
+                {
+                    if (i < (pedidos - 1))
+                    {
+                        der = Nodo(coste, lower_bound, i+1, ocupacion_aux, ben_aux);
+                        nodos_vivos.push(der);
+                    }
+                    if (lower_bound > actualLB)
+                    {
                         actualLB = lower_bound;
                     }
-                    if (i == (pedidos-1) && mejor_sol < lower_bound)
+                    if (i == (pedidos - 1) && mejor_sol < lower_bound)
                     //if (coste == lower_bound)
                     {
                         mejor_sol = coste;
                     }
                 }
+                //cout << "---------------------\n";
             }
-            //cout << "---------------------\n";
+            end = clock();
 
-            //creacion hijo derecho, es decir, se rechaza siguiente peticion
-            //cout << "-------Hijo der----------\n";
-            ocupacion_aux = aux.ocupacion;
-            /*for (int i = 0; i < 7; i++)
-            {
-                cout << "{" << ocupacion_aux[i] << "}";
-            }
-            cout << endl;*/
-            ben_aux = aux.beneficio_actual;
-            coste = costeEstimado(lista, ocupacion_aux, i+1, ben_aux, tren);
-            lower_bound = lowerBound(lista, ocupacion_aux, i+1, ben_aux, tren);
-            //cout << "Hijo der coste estimado: " << coste << endl;
-            //cout << "Hijo der LB: " << lower_bound << endl;
-            if (coste >= actualLB)
-            {
-                if (i < (pedidos - 1))
-                {
-                    der = Nodo(coste, lower_bound, i+1, ocupacion_aux, ben_aux);
-                    nodos_vivos.push(der);
-                }
-                if (lower_bound > actualLB)
-                {
-                    actualLB = lower_bound;
-                }
-                if (i == (pedidos - 1) && mejor_sol < lower_bound)
-                //if (coste == lower_bound)
-                {
-                    mejor_sol = coste;
-                }
-            }
-            //cout << "---------------------\n";
+            double time_taken = double(end - start) / double(CLOCKS_PER_SEC);
+            cout << "Time taken by program is : " << fixed
+                << time_taken << setprecision(10);
+            cout << " sec " << endl;
+
+            cout << "La mejor solucion encontrada ha sido: " << mejor_sol << endl;
+        } else {
+            end = clock();
+            
+            double time_taken = double(end - start) / double(CLOCKS_PER_SEC);
+            cout << "Time taken by program is : " << fixed
+                << time_taken << setprecision(10);
+            cout << " sec " << endl;
+
+            cout << "La mejor solucion encontrada ha sido: " << 0 << " (no cabe ningun pedido)" << endl;
         }
-        end = clock();
 
+        
+    } else {
+        clock_t start, end;
+        start = clock();
+        end = clock();
         double time_taken = double(end - start) / double(CLOCKS_PER_SEC);
         cout << "Time taken by program is : " << fixed
              << time_taken << setprecision(10);
         cout << " sec " << endl;
 
-        entrada.close();
+        cout << "La mejor solucion encontrada ha sido: " << 0 << " (sin pedidos)" << endl;
+    }
+        
 
-        cout << "La mejor solucion encontrada ha sido: " << mejor_sol << endl;
+}
+
+int main(int argc, char *argv[]){
+    
+    if(argc >= 2){
+        
+        ifstream entrada(argv[1]);
+        if(!entrada.is_open()){
+            cerr << "EL fichero de entrada no se ha podido abrir.\n";
+            return -1;
+        }
+
+        ofstream salida(argv[2]);
+        if(!salida.is_open()){
+            cerr << "EL fichero de salida no se ha podido abrir.\n";
+            return -1;
+        }
+        
+        cout.rdbuf(salida.rdbuf()); //redirect cout to salida
+
+        int tren, estaciones, pedidos;
+        entrada >> tren >> estaciones >> pedidos;
+
+        while(!(tren == 0 && estaciones == 0 && pedidos == 0)){
+            cout << "----------------------------------------------------" << endl;
+            resolver(tren,estaciones,pedidos,entrada);
+            entrada >> tren >> estaciones >> pedidos;
+        }
+
+        entrada.close();
+        salida.close();
+
     }
 
     return 0;
