@@ -9,7 +9,7 @@ using namespace std;
 class Nodo {
 public:
     int coste_estimado;
-    int lb;
+    //int lb;
     int order;
     vector<int> ocupacion;
     int beneficio_actual;
@@ -18,9 +18,9 @@ public:
         
     }
 
-    Nodo(int coste_estimado, int lb, int order, vector<int> ocupacion, int beneficio ){
+    Nodo(int coste_estimado,/* int lb,*/ int order, vector<int> ocupacion, int beneficio ){
         this->coste_estimado = coste_estimado;
-        this->lb = lb;
+        //this->lb = lb;
         this->order = order;
         this->ocupacion = ocupacion;
         this->beneficio_actual = beneficio;
