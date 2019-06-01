@@ -32,7 +32,7 @@ bool cabePedido(const vector<int>& ocupacion, pedido p, int tren)
 
 void actOcupacion(vector<int>& ocupacion, pedido p)
 {
-    for (int i = p.inicio; i <= p.fin; i++)
+    for (int i = p.inicio; i < p.fin; i++)//he quitado el = de i <= p.fin
     {
         ocupacion[i] = ocupacion[i] + p.pasajeros;
     }
@@ -116,11 +116,20 @@ int main(int argc, char *argv[]){
 
         cout << "Datos problema: " << tren << ", " << estaciones << ", " << pedidos << endl; 
         //struct pedido lista[pedidos];
-        vector<pedido> lista(pedidos);
+        vector<pedido> lista;
+
+        int begin, fin, pasj, elem = 0;
+        struct pedido p_auxiliar;
 
         for(int i = 0; i < pedidos; i++){
-            entrada >> lista[i].inicio >> lista[i].fin >> lista[i].pasajeros;
+            entrada >> begin >> fin >> pasj;
+            //entrada >> lista[i].inicio >> lista[i].fin >> lista[i].pasajeros;
+            if(pasj <= tren){
+                p_auxiliar.inicio = begin; p_auxiliar.fin = fin; p_auxiliar.pasajeros = pasj;
+                lista.push_back(p_auxiliar);
+            }
         }
+        pedidos = lista.size();
 
         //Inicio real de la resolucion del programa
         clock_t start, end;
@@ -186,8 +195,8 @@ int main(int argc, char *argv[]){
                     if (lower_bound > actualLB){
                         actualLB = lower_bound;
                     }
-                    //if (i == (pedidos-1) && mejor_sol < lower_bound)
-                    if (coste == lower_bound)
+                    if (i == (pedidos-1) && mejor_sol < lower_bound)
+                    //if (coste == lower_bound)
                     {
                         mejor_sol = coste;
                     }
@@ -219,8 +228,8 @@ int main(int argc, char *argv[]){
                 {
                     actualLB = lower_bound;
                 }
-                //if (i == (pedidos - 1) && mejor_sol < lower_bound)
-                if (coste == lower_bound)
+                if (i == (pedidos - 1) && mejor_sol < lower_bound)
+                //if (coste == lower_bound)
                 {
                     mejor_sol = coste;
                 }
