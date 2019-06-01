@@ -6,7 +6,7 @@ using namespace std;
 #define _HEAP_
 
 
-#define MAX 256
+#define MAX 512
 
 /* Clase Heap - implementa un montículo binario de forma estática como un
  * vector de árboles de tamaño 256. El montículo se ordena de forma eficiente

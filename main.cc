@@ -102,12 +102,13 @@ bool factible(const vector<int>& oc, int tren){
 }
 
 void resolver(int tren, int estaciones, int pedidos, ifstream& entrada) {
-     cout << "Datos problema: " << tren << ", " << estaciones << ", " << pedidos << endl; 
-        //struct pedido lista[pedidos];
-        vector<pedido> lista;
+    cout << "-----------------\n";
+    cout << "Datos problema: " << tren << ", " << estaciones << ", " << pedidos << endl; 
+    //struct pedido lista[pedidos];
+    vector<pedido> lista;
 
-        int begin, fin, pasj, elem = 0;
-        struct pedido p_auxiliar;
+    int begin, fin, pasj, elem = 0;
+    struct pedido p_auxiliar;
 
     if(pedidos > 0){
         for(int i = 0; i < pedidos; i++){
@@ -119,28 +120,30 @@ void resolver(int tren, int estaciones, int pedidos, ifstream& entrada) {
             }
         }
         pedidos = lista.size();
-
-        //Inicio real de la resolucion del programa
+        
         clock_t start, end;
         start = clock();
 
-        sort(lista.begin(), lista.end(), cmpBeneficio);
-        
-        int actualLB = 0, mejor_sol = 0;
-        Heap nodos_vivos;
+        if(pedidos > 0){
+        //Inicio real de la resolucion del programa
 
-        int coste, lower_bound;
-        vector<int> ocupacion_aux(7,0);
+            sort(lista.begin(), lista.end(), cmpBeneficio);
+            
+            int actualLB = 0, mejor_sol = 0;
+            Heap nodos_vivos;
 
-        Nodo raiz(0, 0, 0, ocupacion_aux, 0);
+            int coste, lower_bound;
+            vector<int> ocupacion_aux(7,0);
 
-        lower_bound = lowerBound(lista,raiz.ocupacion,0,0,tren);
-        coste = costeEstimado(lista, raiz.ocupacion, 0,0,tren);
+            Nodo raiz(0, 0, 0, ocupacion_aux, 0);
 
-        cout << "Primer coste estimado: " << coste << endl;
-        cout << "Primer LB: " << lower_bound << endl;
+            lower_bound = lowerBound(lista,raiz.ocupacion,0,0,tren);
+            coste = costeEstimado(lista, raiz.ocupacion, 0,0,tren);
 
-        if(lower_bound > 0){
+            cout << "Primer coste estimado: " << coste << endl;
+            cout << "Primer LB: " << lower_bound << endl;
+
+        //if(lower_bound > 0){
             actualLB = lower_bound;
             raiz.coste_estimado = coste;
             raiz.lb = lower_bound;
@@ -256,8 +259,7 @@ void resolver(int tren, int estaciones, int pedidos, ifstream& entrada) {
 
         cout << "La mejor solucion encontrada ha sido: " << 0 << " (sin pedidos)" << endl;
     }
-        
-
+    cout << "-----------------\n";
 }
 
 int main(int argc, char *argv[]){
