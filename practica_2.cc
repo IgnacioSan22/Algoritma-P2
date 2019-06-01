@@ -57,6 +57,18 @@ void actOcupacion(vector<int>& ocupacion, pedido p)
 }
 
 /*
+ * Pre: ocupacion != null
+ * Post: añade un pedido de ocupación p de las paradas ini a fin
+ */
+void actOcupacion(vector<int>& ocupacion, int ini, int fin, int p)
+{
+    for (int i = ini; i <= fin; i++)
+    {
+        ocupacion[i] = ocupacion[i] + p;
+    }
+}
+
+/*
  * Pre: lista != null && ocupacion != null
  * Post: Devuelve el coste de añadir secuencialmente todos los pedidos de lista
  * mientras no se exceda la capacidad del tren
@@ -75,14 +87,6 @@ int lowerBound(vector<pedido> lista, vector<int> ocupacion, int ultimo, int bene
     return lb;
 }
 
-// ESTE HACE FALTA ??
-void actOcupacion(vector<int>& ocupacion, int ini, int fin, int p)
-{
-    for (int i = ini; i <= fin; i++)
-    {
-        ocupacion[i] = ocupacion[i] + p;
-    }
-}
 
 /*
  * Pre: 0 <= ini < fin
@@ -150,7 +154,6 @@ bool factible(const vector<int>& oc, int tren){
 void resolver(int tren, int estaciones, int pedidos, ifstream& entrada) {
     cout << "-----------------\n";
     cout << "Datos problema: " << tren << ", " << estaciones << ", " << pedidos << endl; 
-    //struct pedido lista[pedidos];
 
     /* Declaración de variables */
     vector<pedido> lista;
@@ -175,7 +178,6 @@ void resolver(int tren, int estaciones, int pedidos, ifstream& entrada) {
 
         /* Si se puede aceptar algún pedido, se hace el cálculo */
         if(pedidos > 0){
-        //Inicio real de la resolucion del programa
 
             /* Se ordena la lista por beneficio */
             sort(lista.begin(), lista.end(), cmpBeneficio);
@@ -186,18 +188,17 @@ void resolver(int tren, int estaciones, int pedidos, ifstream& entrada) {
             int coste, lower_bound;
             vector<int> ocupacion_aux(7,0);
 
-            Nodo raiz(0, /*0,*/ 0, ocupacion_aux, 0);
+            Nodo raiz(0, 0, ocupacion_aux, 0);
 
             lower_bound = lowerBound(lista,raiz.ocupacion,0,0,tren);
             coste = costeEstimado(lista, raiz.ocupacion, 0,0,tren);
 
             cout << "Primer coste estimado: " << coste << endl;
             cout << "Primer LB: " << lower_bound << endl;
-        //if(lower_bound > 0){
+
             /* Creación del árbol como cola de prioridades y parametrización */
             actualLB = lower_bound;
             raiz.coste_estimado = coste;
-            //raiz.lb = lower_bound;
 
             nodos_vivos.push(raiz);
 
@@ -247,7 +248,7 @@ void resolver(int tren, int estaciones, int pedidos, ifstream& entrada) {
                 {
                     if (i < (pedidos - 1))
                     {
-                        der = Nodo(coste, /*lower_bound,*/ i+1, ocupacion_aux, ben_aux);
+                        der = Nodo(coste, i+1, ocupacion_aux, ben_aux);
                         nodos_vivos.push(der);
                     }
                     if (lower_bound > actualLB)
@@ -313,13 +314,13 @@ int main(int argc, char *argv[]){
         
         ifstream entrada(argv[1]);
         if(!entrada.is_open()){
-            cerr << "EL fichero de entrada no se ha podido abrir.\n";
+            cerr << "El fichero de entrada no se ha podido abrir.\n";
             return -1;
         }
 
         ofstream salida(argv[2]);
         if(!salida.is_open()){
-            cerr << "EL fichero de salida no se ha podido abrir.\n";
+            cerr << "El fichero de salida no se ha podido abrir.\n";
             return -1;
         }
         
